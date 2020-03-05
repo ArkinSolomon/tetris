@@ -59,7 +59,7 @@ while game_is_active:
     for tile in tiles:
         pygame.draw.lines(screen, border_color, True, [(tile.x, tile.y), (tile.right, tile.y), (tile.right, tile.bottom), (tile.x, tile.bottom)])
 
-    current_block.update()
+    current_block.update(keys[pygame.K_LEFT], keys[pygame.K_RIGHT], keys[pygame.K_SPACE])
 
     for block in blocks: block.draw()
     current_block.draw()
