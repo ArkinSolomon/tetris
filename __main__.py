@@ -56,16 +56,22 @@ while game_is_active:
 
     keys = pygame.key.get_pressed()
 
+    screen.fill((0, 0, 0))
+
     for tile in tiles:
         pygame.draw.lines(screen, border_color, True, [(tile.x, tile.y), (tile.right, tile.y), (tile.right, tile.bottom), (tile.x, tile.bottom)])
 
     current_block.update(keys[pygame.K_LEFT], keys[pygame.K_RIGHT], keys[pygame.K_SPACE])
+    if not current_block.can_move:
+        blocks.append(current_block)
+        current_block = next_block
+        next_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
 
     for block in blocks: block.draw()
-    current_block.draw()
+    current_block.draw()    
 
     pygame.display.flip()
 
-    clock.tick(1)
+    clock.tick(2)
 
 sys.exit(0)

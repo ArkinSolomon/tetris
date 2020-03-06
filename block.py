@@ -47,15 +47,17 @@ class Block:
                 collide = True
                 break
         if not collide:
+            for coord in self.coords: self.map[coord[0]][coord[1]] = False
             for coord in self.coords:
-                exclusive_map[coord[0]][coord[1]] = False
                 coord[0] += 1
                 if down: coord[0] += 1
                 if left and coord[1] > l: coord[1] -= 1
                 if right and coord[1] < r: coord[1] += 1
-                exclusive_map[coord[0]][coord[1]] = False
+                print(coord[0], coord[1])
+                self.map[coord[0]][coord[1]] = True
                 coord[2].rect.y, coord[2].rect.x = self.get_coords(coord[0], coord[1])
         else:
+            print (self.map)
             self.can_move = False
 
     def get_coords(self, y, x):
