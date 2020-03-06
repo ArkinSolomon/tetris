@@ -12,7 +12,7 @@ class Block:
         self.tile_size = tile_size
         self.side_size = side_size
         self.width = width
-        self.heignt = height
+        self.height = height
         self.map = map
         self.all_sprites = all_sprites
 
@@ -33,29 +33,46 @@ class Block:
     def update(self, left, right, down):
         if not self.can_move: return
         collide = False
-        test_map = deepcopy(self.map)
+        exclusive_map = deepcopy(self.map)
+        l = self.width
+        r = -1
         for coord in self.coords:
-            test_map[coord[0]][coord[1]] = False
+            exclusive_map[coord[0]][coord[1]] = False
+            if coord[1] < l:
+                l = coord[1]
+            if coord[1] > r:
+                r = coord[1]
         for coord in self.coords:
-            if self.__check_collide(coord[0], coord[1] + 1):
-                self.can_move = False
+            if self.__check_collide(coord[0], coord[1], map=exclusive_map):
                 collide = True
                 break
         if not collide:
             for coord in self.coords:
-                coord[1] += 1
-                coord[2].rect.y = self.get_coords(coord[0], coord[1])[1]
+                exclusive_map[coord[0]][coord[1]] = False
+                coord[0] += 1
+                if down: coord[0] += 1
+                if left and coord[1] > l: coord[1] -= 1
+                if right and coord[1] < r: coord[1] += 1
+                exclusive_map[coord[0]][coord[1]] = False
+                coord[2].rect.y, coord[2].rect.x = self.get_coords(coord[0], coord[1])
+        else:
+            self.can_move = False
 
-    def get_coords(self, x, y):
-        return [(x * self.tile_size) + self.side_size + x + 1, (y * self.tile_size) + y + 1]
+    def get_coords(self, y, x):
+        return ((y * self.tile_size) + y + 1, (x * self.tile_size) + self.side_size + x + 1)
 
     def __generate(self):
         if self.type == 0:
-            if not self.__check_collide(self.middle_tile_index, 0) and not self.__check_collide(self.middle_tile_index, 1) and not self.__check_collide(self.middle_tile_index, 2) and not self.__check_collide(self.middle_tile_index, 3):
+            if not self.__check_collide(0, self.middle_tile_index) and not self.__check_collide(1, self.middle_tile_index) and not self.__check_collide(2, self.middle_tile_index) and not self.__check_collide(3, self.middle_tile_index):
                 self.color = pygame.Color('lightblue')
-                self.coords = [[self.middle_tile_index, 0, Tile(self.screen, self.tile_size, self.get_coords(self.middle_tile_index, 0), self.color)], [self.middle_tile_index, 1, Tile(self.screen, self.tile_size, self.get_coords(self.middle_tile_index, 1), self.color)], [self.middle_tile_index, 2, Tile(self.screen, self.tile_size, self.get_coords(self.middle_tile_index, 2), self.color)], [self.middle_tile_index, 3, Tile(self.screen, self.tile_size, self.get_coords(self.middle_tile_index, 3), self.color)]]
+                self.coords = [[0, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(0, self.middle_tile_index), self.color)], [1, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index), self.color)], [2, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(2, self.middle_tile_index), self.color)], [3, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(3, self.middle_tile_index), self.color)]]
                 for t in self.coords: self.all_sprites.add(t[2])
 
-    def __check_collide(self, ix, iy):
-        if self.map[ix][iy]:
-            return True
+    def __check_collide(self, iy, ix, map=None):
+        if map is None:
+            if self.map[iy][ix] or iy >= self.height - 1:
+                return True
+        else:
+            if map[iy][ix] or iy >= self.height - 1:
+                return True
+        return False

@@ -7,8 +7,8 @@ class Tile(pygame.sprite.Sprite):
 
         self.screen = screen
         self.size = size
-        self.x = coords[0]
-        self.y = coords[1]
+        self.x = coords[1]
+        self.y = coords[0]
         self.color = color
 
         self.image = pygame.Surface([size - 1, size - 1])

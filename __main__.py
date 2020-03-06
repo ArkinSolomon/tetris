@@ -66,6 +66,6 @@ while game_is_active:
 
     pygame.display.flip()
 
-    clock.tick(2)
+    clock.tick(1)
 
 sys.exit(0)
