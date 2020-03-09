@@ -115,7 +115,10 @@ while game_is_active:
                     tile.map_coord_y += 1
                     tile.rect.y, tile.rect.x = get_coords(tile.map_coord_y, tile.map_coord_x)
                     map[tile.map_coord_y][tile.map_coord_x] = True
-        if (current_block.generate()): print('You lost :(')
+        if (current_block.generate()):
+            print('You lost :(')
+            game_is_active = False
+            break
         next_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
 
     for block in blocks: block.draw()
