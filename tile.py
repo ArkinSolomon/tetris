@@ -10,6 +10,10 @@ class Tile(pygame.sprite.Sprite):
         self.x = coords[1]
         self.y = coords[0]
         self.color = color
+        self.draw = True
+
+        self.map_coord_x = None
+        self.map_coord_y = None
 
         self.image = pygame.Surface([size - 1, size - 1])
         self.image.fill(self.color)
