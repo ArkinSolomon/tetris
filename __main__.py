@@ -11,6 +11,8 @@ def clear():
 
 clear()
 
+title = 'Tetris'
+score = 0
 width = 9
 height = 20
 tile_size = 35
@@ -35,9 +37,16 @@ pygame.init()
 screen_x = (width * tile_size + width) + (side_size * 2)
 screen_y = (height * tile_size) + height
 screen = pygame.display.set_mode([screen_x, screen_y], pygame.HWSURFACE)
-pygame.display.set_caption('Tetris')
+pygame.display.set_caption(title)
+pygame.key.set_repeat(250)
 
-pygame.key.set_repeat(300)
+font_file = 'sen.ttf'
+
+title_font = pygame.font.Font(font_file, 60)
+title_text = title_font.render(title, True, pygame.Color('white'))
+title_size = title_font.size(title)[0]
+
+score_font = pygame.font.Font(font_file, 45)
 
 map = np.zeros((height, width), dtype=np.bool)
 
@@ -105,6 +114,7 @@ while game_is_active:
         for i in range(len(map)):
             row = map[i]
             if not (False in row):
+                score += 10
                 for j in range(len(row)):
                     for tile in all_sprites:
                         if tile.map_coord_y == i and tile.map_coord_x == j:
@@ -120,14 +130,22 @@ while game_is_active:
                     tile.map_coord_y += 1
                     tile.rect.y, tile.rect.x = get_coords(tile.map_coord_y, tile.map_coord_x)
                     map[tile.map_coord_y][tile.map_coord_x] = True
-        if current_block.generate() and game_is_active:
-            print('You lost :(')
+        if current_block.generate():
+            if game_is_active: print('You lost :(')
             game_is_active = False
             break
         next_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
+        if game_is_active: score += 1
 
     for block in blocks: block.draw()
     current_block.draw()
+
+    score_data = f'Score: %d' % score
+    score_text = score_font.render(score_data, True, pygame.Color('white'))
+    score_size = score_font.size(score_data)[0]
+
+    screen.blit(title_text, ((side_size / 2) - (score_size / 2), 20))
+    screen.blit(score_text, ((side_size / 2) - (score_size / 2) + side_size + (width * tile_size), 20))
 
     pygame.display.flip()
 
