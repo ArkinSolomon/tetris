@@ -95,6 +95,11 @@ while game_is_active:
         tile = t[2].rect
         pygame.draw.lines(screen, current_border_color, True, [(tile.x, tile.y), (tile.right, tile.y), (tile.right, tile.bottom), (tile.x, tile.bottom)])
     if not current_block.can_move:
+        for coord in current_block.coords:
+            if coord[0] <= 0:
+                print('You lost :(')
+                game_is_active = False
+                break
         blocks.append(current_block)
         current_block = next_block
         for i in range(len(map)):
@@ -115,7 +120,7 @@ while game_is_active:
                     tile.map_coord_y += 1
                     tile.rect.y, tile.rect.x = get_coords(tile.map_coord_y, tile.map_coord_x)
                     map[tile.map_coord_y][tile.map_coord_x] = True
-        if (current_block.generate()):
+        if current_block.generate() and game_is_active:
             print('You lost :(')
             game_is_active = False
             break
