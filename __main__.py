@@ -11,7 +11,7 @@ def clear():
 
 clear()
 
-width = 10
+width = 9
 height = 20
 tile_size = 35
 side_size = 300

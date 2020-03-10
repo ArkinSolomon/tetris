@@ -22,10 +22,11 @@ class Block:
         self.can_rotate = True
 
         self.updates = 0
-        self.update_every = 20
+        self.update_every = 5
 
-        self.type = r.randrange(0, 5, 1)
-        self.middle_tile_index = floor(width / 2) - 1
+        self.type = 5#r.randrange(0, 6, 1)
+        self.middle_tile_index = floor(width / 2)
+        if self.middle_tile_index % 2 != 0: self.middle_tile_index -= 1
         self.middle_tile = (self.middle_tile_index * tile_size + (self.middle_tile_index + 1)) + side_size
 
         self.generate()
@@ -165,9 +166,18 @@ class Block:
                     self.all_sprites.add(coord[2])
             else: return True
         elif self.type == 5:
-            if not self.__check_collide(0, self.middle_tile_index - 1) and not self.__check_collide(1, self.middle_tile_index - 1) and not self.__check_collide(1, self.middle_tile_index) and not self.__check_collide(1, self.middle_tile_index + 1):
-                self.color = pygame.Color('blue')
-                self.coords = [[0, self.middle_tile_index - 1, Tile(self.screen, self.tile_size, self.get_coords(0, self.middle_tile_index - 1), self.color)], [1, self.middle_tile_index - 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index - 1), self.color)], [1, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index), self.color)], [1, self.middle_tile_index + 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index + 1), self.color)]]
+            if not self.__check_collide(0, self.middle_tile_index) and not self.__check_collide(1, self.middle_tile_index - 1) and not self.__check_collide(1, self.middle_tile_index) and not self.__check_collide(1, self.middle_tile_index + 1):
+                self.color = pygame.Color('purple')
+                self.coords = [[0, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(0, self.middle_tile_index - 1), self.color)], [1, self.middle_tile_index - 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index - 1), self.color)], [1, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index), self.color)], [1, self.middle_tile_index + 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index + 1), self.color)]]
+                self.axis = 2
+                for coord in self.coords:
+                    self.map[coord[0]][coord[1]] = True
+                    self.all_sprites.add(coord[2])
+            else: return True
+        elif self.type == 5:
+            if not self.__check_collide(1, self.middle_tile_index - 1) and not self.__check_collide(1, self.middle_tile_index) and not self.__check_collide(0, self.middle_tile_index) and not self.__check_collide(1, self.middle_tile_index + 1):
+                self.color = pygame.Color('red')
+                self.coords = [[1, self.middle_tile_index - 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index - 1), self.color)], [1, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index), self.color)], [0, self.middle_tile_index, Tile(self.screen, self.tile_size, self.get_coords(0, self.middle_tile_index), self.color)], [1, self.middle_tile_index + 1, Tile(self.screen, self.tile_size, self.get_coords(1, self.middle_tile_index + 1), self.color)]]
                 self.axis = 2
                 for coord in self.coords:
                     self.map[coord[0]][coord[1]] = True
