@@ -1,5 +1,6 @@
 import pygame
 from block import Block
+from preview_tile import Preview_Tile
 import numpy as np
 import sys
 import os
@@ -48,6 +49,10 @@ title_size = title_font.size(title)[0]
 
 score_font = pygame.font.Font(font_file, 45)
 
+next_font = pygame.font.Font(font_file, 50)
+next_text = next_font.render('Next:', True, pygame.Color('white'))
+next_size = title_font.size(title)
+
 map = np.zeros((height, width), dtype=np.bool)
 
 tiles = []
@@ -64,11 +69,50 @@ all_sprites = pygame.sprite.Group()
 
 current_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
 next_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
-
 blocks = []
 
-game_is_active = True
+global preview
+preview_size = 30
+def generate_preview(score_size, next_size):
+    global preview
+    if next_block.type == 0:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + score_size + next_size, pygame.Color('#07d2e8'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('#07d2e8'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + (preview_size * 2) + score_size + next_size, pygame.Color('#07d2e8'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + (preview_size * 3) + score_size + next_size, pygame.Color('#07d2e8'), preview_size, screen)]
+    elif next_block.type == 1:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + score_size + next_size, pygame.Color('blue'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + preview_size + score_size + next_size, pygame.Color('blue'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('blue'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + preview_size + score_size + next_size, pygame.Color('blue'), preview_size, screen)]
+    elif next_block.type == 2:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + score_size + next_size, pygame.Color('orange'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + preview_size + score_size + next_size, pygame.Color('orange'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('orange'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + preview_size + score_size + next_size, pygame.Color('orange'), preview_size, screen)]
+    elif next_block.type == 3:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - preview_size, 40 + score_size + next_size, pygame.Color('yellow'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - preview_size, 40 + preview_size + score_size + next_size, pygame.Color('yellow'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)), 40 + score_size + next_size, pygame.Color('yellow'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)), 40 + preview_size + score_size + next_size, pygame.Color('yellow'), preview_size, screen)]
+    elif next_block.type == 4:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + score_size + next_size + preview_size, pygame.Color('green'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('green'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + score_size + next_size, pygame.Color('green'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + score_size + next_size, pygame.Color('green'), preview_size, screen)]
+    elif next_block.type == 5:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + score_size + next_size, pygame.Color('purple'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + preview_size + score_size + next_size, pygame.Color('purple'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('purple'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + preview_size + score_size + next_size, pygame.Color('purple'), preview_size, screen)]
+    elif next_block.type == 6:
+        preview = [Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) + preview_size, 40 + score_size + next_size + preview_size, pygame.Color('red'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + preview_size + score_size + next_size, pygame.Color('red'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2), 40 + score_size + next_size, pygame.Color('red'), preview_size, screen),
+        Preview_Tile(int((side_size * 1.5) + (width * tile_size)) - (preview_size / 2) - preview_size, 40 + score_size + next_size, pygame.Color('red'), preview_size, screen)]
+generate_preview(45, next_size[1])
 
+game_is_active = True
 clock = pygame.time.Clock()
 
 while game_is_active:
@@ -136,16 +180,20 @@ while game_is_active:
             break
         next_block = Block(screen, tile_size, side_size, width, height, map, all_sprites)
         if game_is_active: score += 1
+        generate_preview(score_size[1], next_size[1])
 
     for block in blocks: block.draw()
     current_block.draw()
 
-    score_data = f'Score: %d' % score
+    score_data = 'Score: %d' % score
     score_text = score_font.render(score_data, True, pygame.Color('white'))
-    score_size = score_font.size(score_data)[0]
+    score_size = score_font.size(score_data)
 
-    screen.blit(title_text, ((side_size / 2) - (score_size / 2), 20))
-    screen.blit(score_text, ((side_size / 2) - (score_size / 2) + side_size + (width * tile_size), 20))
+    screen.blit(title_text, (int((side_size / 2) - (title_size / 2)), 20))
+    screen.blit(score_text, (int((side_size / 2) - (score_size[0] / 2) + side_size + (width * tile_size)), 20))
+    screen.blit(next_text, (int((side_size / 2) - (next_size[0] / 2) + side_size + (width * tile_size)), int(30 + score_size[1])))
+
+    for tile in preview: tile.draw()
 
     pygame.display.flip()
 
